@@ -1,0 +1,56 @@
+- [reference](https://kubernetes.io/docs/concepts/overview/components/)
+- a set of worker machines, called nodes. Every cluster has at least one worker node.
+
+- Control Plane Components
+    - kube-apiserver
+        - exposes the Kubernetes API
+        - front end for the Kubernetes control plane
+        - The main implementation of a Kubernetes API server
+        - scale horizontally 横向扩展
+        - can run several instances
+    - etcd
+        - etcd is the backend for service discovery and stores cluster state and configuration
+        - Consistent and highly-available key value store
+    - kube-scheduler
+    - kube-controller-manager
+        - 运行着多个控制器进程
+        - 逻辑上每个进程是独立的，为简化复杂度，将所有控制器打包在一个binary并只用一个进程运行
+        - 控制器如下
+            - Node controller 节点控制器
+            - Replication controller 复制控制器，负责维护pod的数量
+            - Endpoints controller 端点控制器，连接Services&Pods
+            - Service Account & Token controllers 创建命名空间下的账号、Api访问token
+            - 个人总结：围绕在对node、pod、service的控制管理
+    - cloud-controller-manager
+        - 便于集成云服务商提供的API
+        - 同kube-controller-manager一样，进程是独立的，为简化只用一个进程运行
+        - 控制器如下
+            - Node controller 用于检测节点是否被删除，当得不到响应时
+            - Route controller 用于在云服务提供商的基础设施上设置路由
+            - Service controller 创建、更新、删除云服务提供商的负载均衡器
+    
+- Node Components
+    - kubelet
+        - 运行在集群的每个工作节点，agent 代理人，确保容器在pod的运行
+    - kube-proxy
+        - 运行在集群的每个工作节点，network proxy 网络代理
+        - implementing part of the Kubernetes Service concept.
+        - maintains network rules on nodes. 网络规则
+        - uses the operating system packet filtering layer
+    - Container runtime
+        - responsible for running containers
+        - several container runtimes: 
+            - Docker
+            - containerd
+            - CRI-O
+            - and any implementation of the Kubernetes CRI (Container Runtime Interface)
+    
+- Addons
+    - DNS
+        - 集群必备的[cluster DNS](https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/)
+    - Web UI (Dashboard)
+        - K8S集群控制仪表盘
+    - Container Resource Monitoring
+        - 监控容器资源，将度量数据收集在中心数据库，并提供UI浏览数据
+    - Cluster-level Logging
+        - 集群级别日志，集中保存在日志中心数据库，并提供搜索浏览的UI

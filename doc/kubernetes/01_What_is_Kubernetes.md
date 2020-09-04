@@ -1,0 +1,63 @@
+- [reference](https://kubernetes.io/docs/concepts/overview/what-is-kubernetes/)
+- Traditional deployment era 传统部署时代
+    - 一台物理机上运行多个应用，无法为应用定义资源边界，导致资源分配问题
+        - 比如其中一个应用占用大量资源，其它应用将运行效果变现不佳
+    - 若采用一台物理机运行一个应用，则会导致资源浪费
+    
+- Virtualized deployment era 虚拟化部署时代
+    - 一台物理机上运行多个虚拟机，应用间通过虚拟机进行隔离，更充分地利用了资源，具有可扩展性
+    - 缺点是每个虚拟机运行所有的系统组件，需要各自的操作系统，在虚拟硬件上
+     
+- Container deployment era 容器化部署时代
+    - Agile application creation and deploymen
+        - 敏捷应用程序的创建和部署
+    - Continuous development, integration, and deployment
+        - 不断发展、集成和部署
+    - Dev and Ops separation of concerns
+        - 开发和运维的关注点隔离
+    - Observability
+        - 可观察性
+    - Environmental consistency across development, testing, and production
+        - 环境一致性开发、测试和生产
+    - Cloud and OS distribution portability
+        - 云和操作系统，分发可移植性
+    - Application-centric management
+    - Loosely coupled, distributed, elastic, liberated micro-services
+        - 松散耦合的、分布式的、弹性，无拘束微服务
+    - Resource isolation
+        - 资源隔离
+    - Resource utilization
+        - 资源利用
+        
+- Kubernetes provides
+    - Service discovery and load balancing
+        - 将容器以DNS域名方式或IP地址方式暴露，在运维的角度上，实施负载均衡，新增或减少实例
+    - Storage orchestration
+        - 存储编排，可选择要挂载的存储系统，如本地、云提供商等
+    - Automated rollouts and rollbacks
+        - 指定一个渴望的状态，k8s将负责从实际状态转为渴望状态
+    - Automatic bin packing
+        - 告诉k8s能使用的集群节点，以及容器需要的CPU/内存。k8s将处理容器到节点，并充分地利用资源。
+    - Self-healing
+        - 自愈，k8s负责重启、替换、杀死那些健康状态不通过的容器。
+    - Secret and configuration management
+        - k8s能够帮忙存储和管理敏感信息，比如密码、OAuth tokens、SSH keys等
+        
+- What Kubernetes is not 
+    - Does not limit the types of applications supported
+        - 不会限制应用类型，应用若能运行于容器，k8s按理都支持
+    - Does not deploy source code and does not build your application
+        - 不负责源码的部署、应用的构建
+    - Does not provide application-level services
+        - 不提供应用层服务，比如：中间件（message buses）、数据处理框架（spark）、数据库（mysql）、缓存、集群存储系统（Ceph）等组件
+    - Does not dictate logging, monitoring, or alerting solutions
+        - 不规定日志、监控、提醒方案
+    - Does not provide nor mandate a configuration language/system (for example, Jsonnet)
+        - 不提供或指定配置语言/系统
+    - Does not provide nor adopt any comprehensive machine configuration, maintenance, management, or self-healing systems
+        - 不提供也没有采用任何全面的机器配置，维护，管理，或自愈系统。
+    - Additionally, Kubernetes is not a mere orchestration system. 
+        - 此外，Kubernetes不是一个纯粹的编排系统。
+            - 它消除了编排的需要，编排的技术定义是执行的一个定义的工作流。比如依次执行A、B、C。
+            - 相比之下，Kubernetes由一组独立的可组合的控制过程，持续驱动着当前状态到渴望的状态，而不用关心A是如何达到C的。
+            - 集中化管理也不需要。因此是一个易用、健壮、可复原、可扩展的系统。
