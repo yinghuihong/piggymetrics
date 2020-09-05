@@ -8,7 +8,7 @@
         - The main implementation of a Kubernetes API server
         - scale horizontally 横向扩展
         - can run several instances
-    - etcd
+    - [etcd](https://etcd.io/)
         - etcd is the backend for service discovery and stores cluster state and configuration
         - Consistent and highly-available key value store
     - kube-scheduler

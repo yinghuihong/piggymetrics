@@ -1,0 +1,141 @@
+- [reference](https://kubernetes.io/docs/tutorials/kubernetes-basics/)
+
+- Creating a Cluster
+    - Using Minikube to Create a Cluster
+        - Minikube is a lightweight Kubernetes implementation that creates a VM on your local machine and 
+        deploys a simple cluster containing only one node.
+        - 单个node，创建vm的方式
+    - Interactive Tutorial - Creating a Cluster
+        - minikube version
+        - minikube start
+        - kubectl config get-contexts
+        - kubectl version
+        - kubectl get nodes
+        
+- Deploy an App
+    - Using kubectl to Create a Deployment
+        - Learn about application Deployments.
+        - Deploy your first app on Kubernetes with kubectl.
+    - Interactive Tutorial - Deploying an App
+        - The common format of a kubectl command is: kubectl action resource
+            - kubectl get nodes --help
+        - kubectl create deployment kubernetes-bootcamp --image=gcr.io/google-samples/kubernetes-bootcamp:v1
+            - 寻找一个合适的节点（我们只有1可用节点），应用程序实例可以运行
+            - 在该节点上运行应用程序
+            - 集群配置重新安排一个新节点，运行应用程序实例
+        - kubectl get deployments
+        - kubectl proxy
+            - Pods运行在孤立私有网络，默认在集群内pod、service 相互可见，集群外的网络不可见。
+                我们使用kubectl是通过暴露的API端点。
+                使用proxy将在本地运行服务，负责转发与集群中应用程序的通讯
+            - 输出：Starting to serve on 127.0.0.1:8001，终端将堵塞，control-C 可将proxy退出
+            - 另起一个终端，运行：curl http://localhost:8001/version
+        
+- Explore Your App 探索部署的应用
+    - Viewing Pods and Nodes
+        - Learn about Kubernetes Pods.
+            - kubectl get nodes
+            - kubectl describe nodes
+        - Learn about Kubernetes Nodes.
+            - kubectl get pods
+            - kubectl describe pods
+        - Troubleshoot deployed applications.
+            - kubectl get - list resources
+            - kubectl describe - show detailed information about a resource
+            - kubectl logs - print the logs from a container in a pod
+            - kubectl exec - execute a command on a container in a pod
+    - Interactive Tutorial - Exploring Your App
+        - kubectl proxy
+        - export POD_NAME=$(kubectl get pods -o go-template --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}')
+        - echo $POD_NAME
+        - curl http://localhost:8001/api/v1/namespaces/default/pods/$POD_NAME/proxy/
+        - kubectl logs $POD_NAME
+        - kubectl exec $POD_NAME env
+        - kubectl exec -ti $POD_NAME bash
+            - cat server.js
+            - curl localhost:8080
+            - exit
+    
+- Expose Your App Publicly
+    - Using a Service to Expose Your App
+        - Learn about a Service in Kubernetes
+            - Kubernetes 中的服务(Service)是一种抽象概念，它定义了 Pod 的逻辑集和访问 Pod 的协议。
+            - 每个 Pod 都有一个唯一的 IP 地址，但是如果没有 Service ，这些 IP 不会暴露在群集外部
+            - Service 通过一组 Pod 路由通信。Service 使从属 Pod 之间的松耦合成为可能。
+            - 在依赖的 Pod (如应用程序中的前端和后端组件)之间进行发现和路由是由Kubernetes Service 处理的。
+        - Understand how labels and LabelSelector objects relate to a Service
+            - Service 匹配一组 Pod 是使用 标签(Label)和选择器(Selector)
+        - Expose an application outside a Kubernetes cluster using a Service
+    - 交互式教程 - 暴露你的应用
+        - kubectl get services
+        - kubectl expose deployment/kubernetes-bootcamp --type="NodePort" --port 8080
+            - 为deployment资源对象，创建service资源，以将占用8080端口的应用暴露
+        - export NODE_PORT=$(kubectl get services/kubernetes-bootcamp -o go-template='{{(index.spec.ports 0).nodePort}}')
+        - echo NODE_PORT=$NODE_PORT
+            - 打印暴露的端口（外部可访问的端口）
+        - curl $(minikube ip):$NODE_PORT
+        - kubectl get deployments
+            - 可见 Labels: run=kubernetes-bootcamp
+        - kubectl get pods -l run=kubernetes-bootcamp
+        - kubectl get services -l run=kubernetes-bootcamp
+        - Using labels 案例
+            - export POD_NAME=$(kubectl get pods -o go-template --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}')
+            - echo Name of the Pod: $POD_NAME
+            - kubectl label pod $POD_NAME app=v1
+            - kubectl describe pods $POD_NAME
+            - kubectl get pods -l app=v1
+        - kubectl delete service -l run=kubernetes-bootcamp
+            - 删除service
+        - kubectl exec -ti $POD_NAME curl localhost:8080
+            - 检测应用是否还在运行
+        - kubectl delete deployment/kubernetes-bootcamp
+            - 删除deployment以停止应用
+        - kubectl get pods
+            - 可见pod状态为Terminating
+        
+- Scale Your App
+    - 运行应用程序的多个实例
+        - 用 kubectl 扩缩应用程序
+            - 运行应用程序的多个实例需要在它们之间分配流量。
+            - 服务 (Service)有一种负载均衡器类型，可以将网络流量均衡分配到外部可访问的 Pods 上。
+            - 服务将会一直通过端点来监视 Pods 的运行，保证流量只分配到可用的 Pods 上。
+            - 一旦有了多个应用实例，就可以没有宕机地滚动更新。
+        - 交互教程 - 缩放你的应用
+            - kubectl get deployments
+            - kubectl get rs
+                - To see the ReplicaSet created by the Deployment
+            - kubectl scale deployments/kubernetes-bootcamp --replicas=4
+                - kubectl get deployments
+                - kubectl get pods -o wide
+            - kubectl describe deployments/kubernetes-bootcamp
+                - 查看变更事件 Events
+            - kubectl scale deployments/kubernetes-bootcamp --replicas=2
+                - kubectl get deployments
+                - kubectl get pods -o wide
+
+- Update Your App
+    - Performing a Rolling Update
+        - 使用 kubectl 执行滚动更新。
+            - 滚动更新 允许通过使用新的实例逐步更新 Pod 实例，零停机进行 Deployment 更新。
+            - 新的 Pod 将在具有可用资源的节点上进行调度。
+            - 新的pod采用新的ip
+    - 交互式教程 - 更新你的应用
+        - Update the version of the app
+            - kubectl get pods
+            - kubectl describe pods
+                - 查看 pod 采用的 image
+            - kubectl set image deployments/kubernetes-bootcamp kubernetes-bootcamp=jocatalin/kubernetes-bootcamp:v2
+                - 变更 deployment 采用的镜像
+            - kubectl get pods
+                - 可以看到，先是生成新的pod，然后停止与删除老的pod
+        - Verify an update
+            
+        - Rollback an update
+            - kubectl set image deployments/kubernetes-bootcamp kubernetes-bootcamp=gcr.io/google-samples/kubernetes-bootcamp:v10
+                - There is no image called v10 in the repository.
+            - kubectl get deployments
+            - kubectl get pods
+            - kubectl rollout undo deployments/kubernetes-bootcamp
+                - 将会回退到上一个状态，即v2版本
+                - The rollout command reverted the deployment to the previous known state (v2 of the image). 
+                - Updates are versioned and you can revert to any previously know state of a Deployment
