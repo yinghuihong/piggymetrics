@@ -1,0 +1,7 @@
+name: piggymetrics
+description: A generated Helm Chart for piggymetrics from Skippbox Kompose
+version: 0.0.1
+keywords:
+  - piggymetrics
+sources:
+home:

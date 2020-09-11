@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f docker-compose.yml -o piggymetrics -c
+    kompose.version: 1.19.0 (f63a961c)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: auth-service
+  name: auth-service
+spec:
+  replicas: 1
+  strategy: {}
+  selector:
+    matchLabels:
+        io.kompose.service: auth-service
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert -f docker-compose.yml -o piggymetrics -c
+        kompose.version: 1.19.0 (f63a961c)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: auth-service
+    spec:
+      containers:
+      - env:
+        - name: ACCOUNT_SERVICE_PASSWORD
+          value: "123123"
+        - name: CONFIG_SERVICE_PASSWORD
+          value: "123123"
+        - name: MONGODB_PASSWORD
+          value: "123123"
+        - name: NOTIFICATION_SERVICE_PASSWORD
+          value: "123123"
+        - name: STATISTICS_SERVICE_PASSWORD
+          value: "123123"
+        image: todotodo/piggymetrics-auth-service
+        name: auth-service
+        resources: {}
+      restartPolicy: Always
+status: {}

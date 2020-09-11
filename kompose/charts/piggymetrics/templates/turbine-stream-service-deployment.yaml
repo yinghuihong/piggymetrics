@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f docker-compose.yml -o piggymetrics -c
+    kompose.version: 1.19.0 (f63a961c)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: turbine-stream-service
+  name: turbine-stream-service
+spec:
+  replicas: 1
+  strategy: {}
+  selector:
+    matchLabels:
+        io.kompose.service: turbine-stream-service
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert -f docker-compose.yml -o piggymetrics -c
+        kompose.version: 1.19.0 (f63a961c)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: turbine-stream-service
+    spec:
+      containers:
+      - env:
+        - name: CONFIG_SERVICE_PASSWORD
+          value: "123123"
+        image: todotodo/piggymetrics-turbine-stream-service
+        name: turbine-stream-service
+        ports:
+        - containerPort: 8989
+        resources: {}
+      restartPolicy: Always
+status: {}

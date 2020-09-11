@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f docker-compose.yml -o piggymetrics -c
+    kompose.version: 1.19.0 (f63a961c)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: account-mongodb
+  name: account-mongodb
+spec:
+  replicas: 1
+  strategy: {}
+  selector:
+    matchLabels:
+        io.kompose.service: account-mongodb
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert -f docker-compose.yml -o piggymetrics -c
+        kompose.version: 1.19.0 (f63a961c)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: account-mongodb
+    spec:
+      containers:
+      - env:
+        - name: INIT_DUMP
+          value: account-service-dump.js
+        - name: MONGODB_PASSWORD
+          value: "123123"
+        image: todotodo/piggymetrics-mongodb
+        name: account-mongodb
+        resources: {}
+      restartPolicy: Always
+status: {}

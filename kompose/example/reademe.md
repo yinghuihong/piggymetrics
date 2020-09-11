@@ -1,5 +1,4 @@
 - [kompose](https://kompose.io/)
-    - https://developer.aliyun.com/article/610430
 
 - wget https://raw.githubusercontent.com/kubernetes/kompose/master/examples/docker-compose-v3.yaml -O docker-compose.yaml
 
